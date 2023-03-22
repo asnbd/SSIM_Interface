@@ -16,6 +16,7 @@ class App(ctk.CTk, TkinterDnD.DnDWrapper):
         self.title("SSIM Interface")
         self.geometry(f"{1100}x{580}")
 
+        # configure grid layout
 
 if __name__ == "__main__":
     app = App()
