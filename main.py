@@ -2,6 +2,7 @@ import tkinter as tk
 import tkinter.messagebox
 import customtkinter as ctk
 from tkinterdnd2 import TkinterDnD, DND_FILES
+from PIL import ImageTk, Image
 
 APPEARANCE_MODE = "Light"  # "System", "Dark", "Light"
 DEFAULT_COLOR_THEME = "blue"  # "blue", "green", "dark-blue"
@@ -91,6 +92,17 @@ class App(ctk.CTk, TkinterDnD.DnDWrapper):
             self, label_text="GBP Outputs", orientation="horizontal")
         self.gbp_outputs_frame.grid(
             row=1, column=2, padx=10, pady=10, sticky="nsew")
+
+        self.sample_img = Image.open("images/sample_output_1.png")
+        self.sample_img = self.sample_img.resize((180, 180), Image.ANTIALIAS)
+        self.img = ImageTk.PhotoImage(self.sample_img)
+
+        self.scrollable_frame_images = []
+        for i in range(20):
+            label = tkinter.Label(self.gbp_outputs_frame, image=self.img)
+            label.grid(row=0, column=i, padx=5, pady=10)
+
+            self.scrollable_frame_images.append(label)
 
     # Sidebar Events
     def open_trained_model_btn_event(self):
