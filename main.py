@@ -2,6 +2,7 @@ import tkinter as tk
 import tkinter.messagebox
 import customtkinter as ctk
 from tkinterdnd2 import TkinterDnD, DND_FILES
+import os
 from PIL import ImageTk, Image
 
 APPEARANCE_MODE = "Light"  # "System", "Dark", "Light"
@@ -22,12 +23,11 @@ class App(ctk.CTk, TkinterDnD.DnDWrapper):
         self.minsize(1100, 580)
 
         # configure grid layout
-        self.grid_columnconfigure(1, weight=0)
-        self.grid_columnconfigure(2, weight=1)
+        self.grid_columnconfigure(1, weight=1)
         self.grid_rowconfigure((0, 1, 2), weight=1)
 
         # create sidebar frame with widgets
-        self.sidebar_frame = ctk.CTkFrame(self, width=140, corner_radius=0)
+        self.sidebar_frame = ctk.CTkFrame(self, width=320, corner_radius=0)
         self.sidebar_frame.grid(row=0, column=0, rowspan=4, sticky="nsew")
         self.create_sidebar_widgets(self.sidebar_frame)
 
@@ -43,19 +43,36 @@ class App(ctk.CTk, TkinterDnD.DnDWrapper):
             frame, text="SSIM Interface", font=ctk.CTkFont(size=20, weight="bold"))
         self.logo_label.grid(row=0, column=0, padx=20, pady=(20, 10))
 
+        image_path = os.path.join(os.path.dirname(
+            os.path.realpath(__file__)), "images")
         # Upload Trained Model Option
+        # self.open_trained_model_btn = ctk.CTkButton(
+        #     frame, width=180, command=self.open_trained_model_btn_event, text="Upload Trained Model")
+        # self.open_trained_model_btn.grid(row=1, column=0, padx=20, pady=10)
+        self.add_file_image = ctk.CTkImage(
+            light_image=Image.open(os.path.join(
+                image_path, "add-file-light.png")),
+            dark_image=Image.open(os.path.join(image_path, "add-file-dark.png")), size=(32, 32))
+
+        self.add_image = ctk.CTkImage(
+            light_image=Image.open(os.path.join(
+                image_path, "add-image-light.png")),
+            dark_image=Image.open(os.path.join(image_path, "add-image-dark.png")), size=(32, 32))
+
         self.open_trained_model_btn = ctk.CTkButton(
-            frame, command=self.open_trained_model_btn_event, text="Upload Trained Model")
+            frame, text="Upload Trained Model", image=self.add_file_image, compound="top", fg_color=("gray75", "gray25"),
+            text_color=("gray10", "gray90"), hover_color=("gray70", "gray30"), width=180, height=100, command=self.open_trained_model_btn_event)
         self.open_trained_model_btn.grid(row=1, column=0, padx=20, pady=10)
 
         # Upload Image option
         self.open_image_btn = ctk.CTkButton(
-            frame, command=self.open_image_btn_event, text="Upload Image")
+            frame, text="Upload Image", image=self.add_image, compound="top", fg_color=("gray75", "gray25"),
+            text_color=("gray10", "gray90"), hover_color=("gray70", "gray30"), width=180, height=100, command=self.open_image_btn_event)
         self.open_image_btn.grid(row=2, column=0, padx=20, pady=10)
 
         # Name of convolution layers button
         self.conv_layers_entry = ctk.CTkEntry(
-            frame, placeholder_text="Name of Convolution Layers")
+            frame, width=180, placeholder_text="Name of Convolution Layers")
         self.conv_layers_entry.grid(row=3, column=0, padx=20, pady=10)
 
         # Generate button
@@ -84,14 +101,14 @@ class App(ctk.CTk, TkinterDnD.DnDWrapper):
         self.ssim_cutcurve_frame = ctk.CTkScrollableFrame(
             self, label_text="SSIM Cut Curve", orientation="horizontal")
         self.ssim_cutcurve_frame.grid(
-            row=0, column=2, padx=10, pady=10, sticky="nsew")
+            row=0, column=1, padx=10, pady=10, sticky="nsew")
 
     # Create GBP Outputs Frame
     def create_gbp_outputs_frame(self):
         self.gbp_outputs_frame = ctk.CTkScrollableFrame(
             self, label_text="GBP Outputs", orientation="horizontal")
         self.gbp_outputs_frame.grid(
-            row=1, column=2, padx=10, pady=10, sticky="nsew")
+            row=1, column=1, padx=10, pady=10, sticky="nsew")
 
         self.sample_img = Image.open("images/sample_output_1.png")
         self.sample_img = self.sample_img.resize((180, 180), Image.ANTIALIAS)
