@@ -70,6 +70,13 @@ class App(ctk.CTk, TkinterDnD.DnDWrapper):
             text_color=("gray10", "gray90"), hover_color=("gray70", "gray30"), width=180, height=100, command=self.open_image_btn_event)
         self.open_image_btn.grid(row=2, column=0, padx=20, pady=10)
 
+        # Drag and Drop Register
+        self.open_trained_model_btn.drop_target_register(DND_FILES)
+        self.open_trained_model_btn.dnd_bind(
+            "<<Drop>>", self.drop_trained_model)
+        self.open_image_btn.drop_target_register(DND_FILES)
+        self.open_image_btn.dnd_bind("<<Drop>>", self.drop_image)
+
         # Name of convolution layers button
         self.conv_layers_entry = ctk.CTkEntry(
             frame, width=180, placeholder_text="Name of Convolution Layers")
@@ -137,6 +144,15 @@ class App(ctk.CTk, TkinterDnD.DnDWrapper):
     # Others
     def change_appearance_mode_event(self, new_appearance_mode: str):
         ctk.set_appearance_mode(new_appearance_mode)
+
+    # Drag and Drop
+    def drop_trained_model(self, event):
+        # TODO: Implement Drag and Drop Trained Model File
+        print("Model:", event.data)
+
+    def drop_image(self, event):
+        # TODO: Implement Drag and Drop Image File
+        print("Image:", event.data)
 
 
 if __name__ == "__main__":
