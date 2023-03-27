@@ -21,8 +21,8 @@ class App(ctk.CTk, TkinterDnD.DnDWrapper):
         self.minsize(1100, 580)
 
         # configure grid layout
-        self.grid_columnconfigure(1, weight=1)
-        self.grid_columnconfigure((2, 3), weight=0)
+        self.grid_columnconfigure(1, weight=0)
+        self.grid_columnconfigure(2, weight=1)
         self.grid_rowconfigure((0, 1, 2), weight=1)
 
         # create sidebar frame with widgets
@@ -32,6 +32,9 @@ class App(ctk.CTk, TkinterDnD.DnDWrapper):
 
         # set default values
         self.set_default_values()
+
+        self.create_ssim_cutcurve_frame()
+        self.create_gbp_outputs_frame()
 
     def create_sidebar_widgets(self, frame):
         # Sidebar Logo & Title
@@ -74,8 +77,22 @@ class App(ctk.CTk, TkinterDnD.DnDWrapper):
     # Set Default Values
     def set_default_values(self):
         self.appearance_mode_optionemenu.set(APPEARANCE_MODE)
-        # Sidebar Events
 
+    # Create SSIM Cut Curve Frame
+    def create_ssim_cutcurve_frame(self):
+        self.ssim_cutcurve_frame = ctk.CTkScrollableFrame(
+            self, label_text="SSIM Cut Curve", orientation="horizontal")
+        self.ssim_cutcurve_frame.grid(
+            row=0, column=2, padx=10, pady=10, sticky="nsew")
+
+    # Create GBP Outputs Frame
+    def create_gbp_outputs_frame(self):
+        self.gbp_outputs_frame = ctk.CTkScrollableFrame(
+            self, label_text="GBP Outputs", orientation="horizontal")
+        self.gbp_outputs_frame.grid(
+            row=1, column=2, padx=10, pady=10, sticky="nsew")
+
+    # Sidebar Events
     def open_trained_model_btn_event(self):
         # TODO: Implement Upload Trained Model Button Click Event
         pass
