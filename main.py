@@ -1,9 +1,10 @@
+import os
 import tkinter as tk
 import tkinter.messagebox
 import customtkinter as ctk
 from tkinterdnd2 import TkinterDnD, DND_FILES
-import os
 from PIL import ImageTk, Image
+from tkinter import filedialog
 
 APPEARANCE_MODE = "Light"  # "System", "Dark", "Light"
 DEFAULT_COLOR_THEME = "blue"  # "blue", "green", "dark-blue"
@@ -54,6 +55,11 @@ class App(ctk.CTk, TkinterDnD.DnDWrapper):
                 image_path, "add-file-light.png")),
             dark_image=Image.open(os.path.join(image_path, "add-file-dark.png")), size=(32, 32))
 
+        self.file_img = ctk.CTkImage(
+            light_image=Image.open(os.path.join(
+                image_path, "file.png")),
+            dark_image=Image.open(os.path.join(image_path, "file.png")), size=(64, 64))
+
         self.add_image = ctk.CTkImage(
             light_image=Image.open(os.path.join(
                 image_path, "add-image-light.png")),
@@ -61,13 +67,13 @@ class App(ctk.CTk, TkinterDnD.DnDWrapper):
 
         self.open_trained_model_btn = ctk.CTkButton(
             frame, text="Upload Trained Model", image=self.add_file_image, compound="top", fg_color=("gray75", "gray25"),
-            text_color=("gray10", "gray90"), hover_color=("gray70", "gray30"), width=180, height=100, command=self.open_trained_model_btn_event)
+            text_color=("gray10", "gray90"), hover_color=("gray70", "gray30"), width=180, height=110, command=self.open_trained_model_btn_event)
         self.open_trained_model_btn.grid(row=1, column=0, padx=20, pady=10)
 
         # Upload Image option
         self.open_image_btn = ctk.CTkButton(
             frame, text="Upload Image", image=self.add_image, compound="top", fg_color=("gray75", "gray25"),
-            text_color=("gray10", "gray90"), hover_color=("gray70", "gray30"), width=180, height=100, command=self.open_image_btn_event)
+            text_color=("gray10", "gray90"), hover_color=("gray70", "gray30"), width=180, height=110, command=self.open_image_btn_event)
         self.open_image_btn.grid(row=2, column=0, padx=20, pady=10)
 
         # Drag and Drop Register
@@ -118,7 +124,8 @@ class App(ctk.CTk, TkinterDnD.DnDWrapper):
             row=1, column=1, padx=10, pady=10, sticky="nsew")
 
         self.sample_img = Image.open("images/sample_output_1.png")
-        self.sample_img = self.sample_img.resize((180, 180), Image.ANTIALIAS)
+        self.sample_img = self.sample_img.resize(
+            (180, 180), Image.Resampling.LANCZOS)
         self.img = ImageTk.PhotoImage(self.sample_img)
 
         self.scrollable_frame_images = []
@@ -128,14 +135,55 @@ class App(ctk.CTk, TkinterDnD.DnDWrapper):
 
             self.scrollable_frame_images.append(label)
 
+    # File Browser
+    def open_file(self, type=0):
+        file_types = [
+            (("H5 Model", "*.h5"), ("All files", "*.*")),
+            (("PNG Images", "*.png"), ("JPG Images", "*.jpg"))
+        ]
+
+        filename = filedialog.askopenfilename(
+            initialdir="images", title="Select Image", filetypes=file_types[type])
+
+        return filename
+
     # Sidebar Events
     def open_trained_model_btn_event(self):
-        # TODO: Implement Upload Trained Model Button Click Event
-        pass
+        # TODO: Update Upload Trained Model Button Click Event
+        file_path = self.open_file()
+        self.preview_file(file_path)
 
     def open_image_btn_event(self):
-        # TODO: Implement Upload Image Button Click Event
-        pass
+        # TODO: Update Upload Image Button Click Event
+        file_path = self.open_file(1)
+        self.preview_image(file_path)
+
+    def preview_file(self, file_path):
+        filename = os.path.basename(file_path)
+        self.open_trained_model_btn.configure(image=self.file_img)
+        self.open_trained_model_btn.configure(
+            text=self.get_truncated_file_name(filename) + "\nModel File")
+
+    def preview_image(self, file_path):
+        filename = os.path.basename(file_path)
+        # TODO: Fix to support HighDPI
+        # self.open_img = ctk.CTkImage(Image.open(file_path), size=(64, 64))
+        img = Image.open(file_path)
+        img.thumbnail((64, 64))
+
+        self.open_img = ImageTk.PhotoImage(img)
+
+        self.open_image_btn.configure(image=self.open_img)
+        self.open_image_btn.configure(
+            text=self.get_truncated_file_name(filename) + "\nImage")
+
+    def get_truncated_file_name(self, filename, lens=20):
+        filename_len = len(filename)
+
+        if filename_len <= lens + 3:
+            return filename
+
+        return filename[:lens//2] + "..." + filename[filename_len-(lens//2):]
 
     def generate_btn_event(self):
         # TODO: Implement Generate Button Click Event
@@ -149,10 +197,12 @@ class App(ctk.CTk, TkinterDnD.DnDWrapper):
     def drop_trained_model(self, event):
         # TODO: Implement Drag and Drop Trained Model File
         print("Model:", event.data)
+        self.preview_file(event.data.strip("{}"))
 
     def drop_image(self, event):
         # TODO: Implement Drag and Drop Image File
         print("Image:", event.data)
+        self.preview_image(event.data.strip("{}"))
 
 
 if __name__ == "__main__":
