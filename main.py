@@ -142,8 +142,10 @@ class App(ctk.CTk, TkinterDnD.DnDWrapper):
             (("PNG Images", "*.png"), ("JPG Images", "*.jpg"))
         ]
 
+        title = "Select File" if type == 0 else "Select Image"
+
         filename = filedialog.askopenfilename(
-            initialdir="images", title="Select Image", filetypes=file_types[type])
+            title=title, filetypes=file_types[type])
 
         return filename
 
@@ -151,12 +153,14 @@ class App(ctk.CTk, TkinterDnD.DnDWrapper):
     def open_trained_model_btn_event(self):
         # TODO: Update Upload Trained Model Button Click Event
         file_path = self.open_file()
-        self.preview_file(file_path)
+        if file_path:
+            self.preview_file(file_path)
 
     def open_image_btn_event(self):
         # TODO: Update Upload Image Button Click Event
         file_path = self.open_file(1)
-        self.preview_image(file_path)
+        if file_path:
+            self.preview_image(file_path)
 
     def preview_file(self, file_path):
         filename = os.path.basename(file_path)
