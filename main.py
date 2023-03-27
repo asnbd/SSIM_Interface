@@ -164,12 +164,24 @@ class App(ctk.CTk, TkinterDnD.DnDWrapper):
 
     def preview_file(self, file_path):
         filename = os.path.basename(file_path)
+
+        if not filename.lower().endswith(".h5"):
+            tkinter.messagebox.showwarning(
+                "Warning", "Invalid file type. Please select a valid trained model file.")
+            return
+
         self.open_trained_model_btn.configure(image=self.file_img)
         self.open_trained_model_btn.configure(
             text=self.get_truncated_file_name(filename) + "\nModel File")
 
     def preview_image(self, file_path):
         filename = os.path.basename(file_path)
+        image_types = "jpg", "jpeg", "png"
+        if filename.lower().split(".")[-1] not in image_types:
+            tkinter.messagebox.showwarning(
+                "Warning", "Invalid image file type. Please select a valid image file.")
+            return
+
         # TODO: Fix to support HighDPI
         # self.open_img = ctk.CTkImage(Image.open(file_path), size=(64, 64))
         img = Image.open(file_path)
